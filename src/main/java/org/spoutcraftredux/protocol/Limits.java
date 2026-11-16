@@ -1,0 +1,13 @@
+package org.spoutcraftredux.protocol;
+
+/** Hard caps every decoder enforces. */
+public final class Limits {
+    public static final int MAX_CLIENTBOUND_BYTES = 1 << 20;
+    public static final int MAX_SERVERBOUND_BYTES = 32 * 1024 - 1;
+    public static final int MAX_CAPABILITIES = 64;
+    public static final int MAX_CAPABILITY_LENGTH = 64;
+    public static final int MAX_VERSION_STRING_LENGTH = 64;
+
+    private Limits() {
+    }
+}
