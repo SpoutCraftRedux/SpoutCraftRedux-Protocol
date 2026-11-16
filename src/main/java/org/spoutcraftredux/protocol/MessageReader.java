@@ -70,6 +70,15 @@ public final class MessageReader {
         return values;
     }
 
+    public byte[] readBytes(int length) {
+        if (length < 0 || length > remaining()) {
+            throw new ProtocolException("Byte array runs past end of message");
+        }
+        byte[] bytes = java.util.Arrays.copyOfRange(this.buf, this.pos, this.pos + length);
+        this.pos += length;
+        return bytes;
+    }
+
     public int remaining() {
         return buf.length - pos;
     }

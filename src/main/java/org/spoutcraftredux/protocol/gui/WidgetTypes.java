@@ -16,6 +16,8 @@ public final class WidgetTypes {
     public static final String GRADIENT = "gradient";
     /** item (string item id). */
     public static final String ITEM = "item";
+    /** asset (SHA-256 hex of a PNG the client fetches with AssetRequest). Drawn stretched to the widget's size. */
+    public static final String TEXTURE = "texture";
     /** titles and texts (lists of JSON, one per row), selected (int, -1 for none). Sends SELECT. */
     public static final String LIST = "list";
 
