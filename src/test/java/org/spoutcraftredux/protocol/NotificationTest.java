@@ -14,7 +14,7 @@ class NotificationTest {
     }
 
     @Test
-    void zeroMeansOriginalDefault() {
+    void zeroMeansDefaultDisplayTime() {
         assertEquals(7500, new Notification("\"a\"", "\"b\"", "minecraft:stone", 0).effectiveDisplayMillis());
         assertEquals(1200, new Notification("\"a\"", "\"b\"", "minecraft:stone", 1200).effectiveDisplayMillis());
     }

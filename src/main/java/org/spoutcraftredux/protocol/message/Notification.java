@@ -6,12 +6,12 @@ import org.spoutcraftredux.protocol.MessageWriter;
 import org.spoutcraftredux.protocol.ProtocolException;
 
 /**
- * Server to client: show the classic Spoutcraft notification popup.
+ * Server to client: show the notification popup.
  *
  * @param titleJson     title as a JSON text component
  * @param messageJson   message as a JSON text component
  * @param itemId        item drawn as the icon, such as {@code minecraft:diamond}
- * @param displayMillis how long it stays up; 0 means the original default of 7.5 seconds
+ * @param displayMillis how long it stays up; 0 means the default of 7.5 seconds
  */
 public record Notification(String titleJson, String messageJson, String itemId, int displayMillis) {
     public static final String CHANNEL = "spoutcraftredux:notification";
