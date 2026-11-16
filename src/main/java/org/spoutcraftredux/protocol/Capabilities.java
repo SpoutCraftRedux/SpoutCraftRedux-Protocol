@@ -8,6 +8,7 @@ public final class Capabilities {
     public static final String KEYBIND = "keybind.v1";
     public static final String NOTIFICATION = "notification.v1";
     public static final String ASSET = "asset.v1";
+    public static final String CONTENT = "content.v1";
 
     private Capabilities() {
     }

@@ -16,6 +16,8 @@ public final class Limits {
     public static final int MAX_PROPERTY_KEY_LENGTH = 32;
     public static final int MAX_PROPERTY_STRING_LENGTH = 32767;
     public static final int MAX_LIST_ENTRIES = 1024;
+    public static final int MAX_CONTENT_ENTRIES = 4096;
+    public static final int MAX_CONTENT_PROPERTIES = 64;
 
     private Limits() {
     }
