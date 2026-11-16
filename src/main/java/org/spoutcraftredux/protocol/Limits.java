@@ -11,6 +11,11 @@ public final class Limits {
     public static final int MAX_IDENTIFIER_LENGTH = 256;
     public static final int MAX_KEY_BINDINGS = 256;
     public static final int MAX_PLUGIN_NAME_LENGTH = 64;
+    public static final int MAX_WIDGETS = 1024;
+    public static final int MAX_WIDGET_PROPERTIES = 32;
+    public static final int MAX_PROPERTY_KEY_LENGTH = 32;
+    public static final int MAX_PROPERTY_STRING_LENGTH = 32767;
+    public static final int MAX_LIST_ENTRIES = 1024;
 
     private Limits() {
     }
