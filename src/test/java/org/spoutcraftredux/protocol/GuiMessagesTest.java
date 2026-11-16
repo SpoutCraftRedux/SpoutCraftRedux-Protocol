@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.spoutcraftredux.protocol.gui.Anchors;
+import org.spoutcraftredux.protocol.gui.VanillaElements;
 import org.spoutcraftredux.protocol.gui.WidgetSpec;
 import org.spoutcraftredux.protocol.gui.WidgetTypes;
 import org.spoutcraftredux.protocol.message.ControlEvent;
 import org.spoutcraftredux.protocol.message.ScreenClose;
 import org.spoutcraftredux.protocol.message.ScreenOpen;
+import org.spoutcraftredux.protocol.message.VanillaHud;
 import org.spoutcraftredux.protocol.message.WidgetRemove;
 import org.spoutcraftredux.protocol.message.WidgetUpdate;
 
@@ -56,5 +58,14 @@ class GuiMessagesTest {
         assertThrows(ProtocolException.class, () -> new WidgetSpec(0, WidgetTypes.LABEL, 0, 0, 0, 0, 0, true, true, "", Map.of()));
         byte[] forged = new MessageWriter().writeVarInt(1).writeString("\"t\"", 10).writeVarInt(Limits.MAX_WIDGETS + 1).toByteArray();
         assertThrows(ProtocolException.class, () -> ScreenOpen.decode(forged));
+    }
+
+    @Test
+    void vanillaHudRoundTrips() {
+        VanillaHud hud = new VanillaHud(List.of(new VanillaHud.Element(VanillaElements.HEALTH, false, 0, 0),
+            new VanillaHud.Element(VanillaElements.CHAT, true, -10, -40)));
+        assertEquals(hud, VanillaHud.decode(hud.encode()));
+        byte[] forged = new MessageWriter().writeVarInt(65).toByteArray();
+        assertThrows(ProtocolException.class, () -> VanillaHud.decode(forged));
     }
 }
