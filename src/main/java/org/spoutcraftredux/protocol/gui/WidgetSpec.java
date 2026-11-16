@@ -1,12 +1,11 @@
 package org.spoutcraftredux.protocol.gui;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.spoutcraftredux.protocol.Limits;
 import org.spoutcraftredux.protocol.MessageReader;
 import org.spoutcraftredux.protocol.MessageWriter;
+import org.spoutcraftredux.protocol.PropertyMap;
 import org.spoutcraftredux.protocol.ProtocolException;
 
 /**
@@ -27,11 +26,6 @@ import org.spoutcraftredux.protocol.ProtocolException;
  */
 public record WidgetSpec(int id, String type, int x, int y, int width, int height, int anchor, boolean visible,
                          boolean enabled, String tooltipJson, Map<String, Object> properties) {
-    private static final int BOOLEAN = 0;
-    private static final int INT = 1;
-    private static final int FLOAT = 2;
-    private static final int STRING = 3;
-    private static final int STRING_LIST = 4;
 
     public WidgetSpec {
         if (id < 1) {
@@ -73,26 +67,8 @@ public record WidgetSpec(int id, String type, int x, int y, int width, int heigh
             .writeVarInt(this.x).writeVarInt(this.y).writeVarInt(this.width).writeVarInt(this.height)
             .writeVarInt(this.anchor)
             .writeBoolean(this.visible).writeBoolean(this.enabled)
-            .writeString(this.tooltipJson, Limits.MAX_COMPONENT_JSON_LENGTH)
-            .writeVarInt(this.properties.size());
-        for (Map.Entry<String, Object> entry : this.properties.entrySet()) {
-            out.writeString(entry.getKey(), Limits.MAX_PROPERTY_KEY_LENGTH);
-            switch (entry.getValue()) {
-                case Boolean value -> out.writeByte(BOOLEAN).writeBoolean(value);
-                case Integer value -> out.writeByte(INT).writeVarInt(value);
-                case Float value -> out.writeByte(FLOAT).writeVarInt(Float.floatToIntBits(value));
-                case String value -> out.writeByte(STRING).writeString(value, Limits.MAX_PROPERTY_STRING_LENGTH);
-                case List<?> value -> {
-                    out.writeByte(STRING_LIST);
-                    List<String> strings = new ArrayList<>(value.size());
-                    for (Object item : value) {
-                        strings.add((String) item);
-                    }
-                    out.writeStrings(strings, Limits.MAX_LIST_ENTRIES, Limits.MAX_COMPONENT_JSON_LENGTH);
-                }
-                default -> throw new ProtocolException("Unsupported property type for " + entry.getKey());
-            }
-        }
+            .writeString(this.tooltipJson, Limits.MAX_COMPONENT_JSON_LENGTH);
+        PropertyMap.write(out, this.properties);
     }
 
     public static WidgetSpec read(MessageReader in) {
@@ -106,30 +82,7 @@ public record WidgetSpec(int id, String type, int x, int y, int width, int heigh
         boolean visible = in.readBoolean();
         boolean enabled = in.readBoolean();
         String tooltip = in.readString(Limits.MAX_COMPONENT_JSON_LENGTH);
-        int count = in.readLength(Limits.MAX_WIDGET_PROPERTIES);
-        Map<String, Object> properties = new LinkedHashMap<>();
-        for (int i = 0; i < count; i++) {
-            String key = in.readString(Limits.MAX_PROPERTY_KEY_LENGTH);
-            Object value = switch (in.readByte()) {
-                case BOOLEAN -> in.readBoolean();
-                case INT -> in.readVarInt();
-                case FLOAT -> Float.intBitsToFloat(in.readVarInt());
-                case STRING -> in.readString(Limits.MAX_PROPERTY_STRING_LENGTH);
-                case STRING_LIST -> List.copyOf(readOrderedStrings(in));
-                default -> throw new ProtocolException("Unknown property type");
-            };
-            properties.put(key, value);
-        }
+        Map<String, Object> properties = PropertyMap.read(in, Limits.MAX_WIDGET_PROPERTIES);
         return new WidgetSpec(id, type, x, y, width, height, anchor, visible, enabled, tooltip, properties);
-    }
-
-    // Lists keep their order and duplicates, unlike readStrings
-    private static List<String> readOrderedStrings(MessageReader in) {
-        int count = in.readLength(Limits.MAX_LIST_ENTRIES);
-        List<String> values = new ArrayList<>(count);
-        for (int i = 0; i < count; i++) {
-            values.add(in.readString(Limits.MAX_COMPONENT_JSON_LENGTH));
-        }
-        return values;
     }
 }
